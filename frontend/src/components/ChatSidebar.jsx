@@ -1,6 +1,11 @@
-const chatHistory = ['New Chat']
-
-function ChatSidebar({ isOpen, onClose, onNewChat }) {
+function ChatSidebar({
+  isOpen,
+  onClose,
+  onNewChat,
+  conversations,
+  activeConversationId,
+  onSelectConversation,
+}) {
   return (
     <aside
       aria-label="Chat history"
@@ -32,15 +37,19 @@ function ChatSidebar({ isOpen, onClose, onNewChat }) {
       </button>
 
       <div className="mt-4 flex flex-col gap-2">
-        {chatHistory.map((chat, index) => (
-          <div
-            key={`${chat}-${index}`}
-            className={`rounded-md px-3 py-2 text-sm text-[var(--body-color)] ${
-              index === 0 ? 'bg-[var(--history-active)] font-medium' : 'bg-transparent'
+        {conversations.map((chat) => (
+          <button
+            key={chat.id}
+            type="button"
+            onClick={() => onSelectConversation(chat.id)}
+            className={`truncate rounded-md px-3 py-2 text-left text-sm text-[var(--body-color)] ${
+              chat.id === activeConversationId
+                ? 'bg-[var(--history-active)] font-medium'
+                : 'bg-transparent hover:bg-[var(--hover-bg)]'
             }`}
           >
-            {chat}
-          </div>
+            {chat.title}
+          </button>
         ))}
       </div>
     </aside>

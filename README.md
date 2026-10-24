@@ -1,16 +1,11 @@
 # Generative AI Chat
 
-## Run the app locally
+An authenticated AI chat application with MongoDB conversation history and
+streamed assistant responses.
 
-Install the frontend dependencies and start Vite:
+## Run locally
 
-```sh
-cd frontend
-npm install
-npm run dev
-```
-
-In a second terminal, configure and start the API:
+Start MongoDB locally, then configure the backend:
 
 ```sh
 cd backend
@@ -18,15 +13,55 @@ npm install
 cp .env.example .env
 ```
 
-Set `OPENAI_API_KEY` in `backend/.env` to an OpenAI API key, then run:
+Set `OPENAI_API_KEY` and a random `JWT_SECRET` with at least 32 characters in
+`backend/.env`, then start the API:
 
 ```sh
 npm run dev
 ```
 
-The frontend proxies `/api` requests to the backend on port `3001`. The API key
-must only be stored in `backend/.env`; it is never included in frontend code.
-The default model is `gpt-4o-mini` and can be changed with `OPENAI_MODEL`.
+In a second terminal, run the frontend:
 
-The chat currently sends text conversation history to the AI. Attachments can
-be displayed in the chat, but their contents are not uploaded or analyzed.
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+The Vite server proxies `/api` requests to `http://localhost:3001`. Register an
+account in the app; conversations are saved to the MongoDB database configured
+by `MONGODB_URI` and `MONGODB_DATABASE`. The OpenAI key and JWT secret stay on
+the backend. `OPENAI_MODEL` defaults to `gpt-4o-mini`.
+
+## Deploy with Docker Compose
+
+Install Docker Compose, then create the backend environment file:
+
+```sh
+cp backend/.env.example backend/.env
+```
+
+Set `OPENAI_API_KEY` and a randomly generated `JWT_SECRET` of at least 32
+characters in `backend/.env`, then start the services from the repository root:
+
+```sh
+docker compose up --build -d
+```
+
+Compose loads the backend secrets from `backend/.env` and overrides
+`MONGODB_URI` inside the container to use the MongoDB service hostname.
+
+Open [http://localhost:8080](http://localhost:8080). Compose runs MongoDB, the
+API, and the Nginx-served frontend; MongoDB data is kept in the `mongo-data`
+volume. Do not use sample secrets in production. For internet-facing
+deployments, put the app behind HTTPS and use a managed or authenticated
+MongoDB service with backups.
+
+## Features and limitations
+
+- Email/password registration and sign-in; passwords are hashed and API
+  requests use signed bearer tokens that expire after seven days.
+- Conversation history is private to the signed-in account.
+- Assistant responses stream as they are generated.
+- Attachments can be displayed in the chat, but file contents are not uploaded
+  or analyzed.

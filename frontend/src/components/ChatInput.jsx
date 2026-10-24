@@ -5,6 +5,8 @@ function ChatInput({
   attachments,
   onAddAttachments,
   onRemoveAttachment,
+  isLoading,
+  error,
 }) {
   const handleFileChange = (event) => {
     onAddAttachments(Array.from(event.target.files ?? []))
@@ -21,6 +23,11 @@ function ChatInput({
   return (
     <div className="shrink-0 border-t border-[var(--border-color)] bg-[var(--composer-bg)] px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-5 sm:pt-4">
       <div className="mx-auto max-w-[1120px] rounded-xl border border-[var(--border-color)] bg-[var(--panel-bg)] px-2 py-2 shadow-sm sm:px-3 sm:py-3">
+        {error && (
+          <p role="alert" className="mb-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-700">
+            {error}
+          </p>
+        )}
         {attachments.length > 0 && (
           <ul aria-label="Selected attachments" className="mb-2 flex flex-wrap gap-2">
             {attachments.map((file, index) => (
@@ -74,16 +81,18 @@ function ChatInput({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={isLoading}
             placeholder="Send a message..."
             className="h-11 min-w-0 flex-1 border-none bg-transparent px-2 text-[15px] text-[var(--body-color)] placeholder:text-[var(--muted-color)] focus:outline-none sm:h-12"
           />
           <button
             type="button"
             onClick={onSend}
+            disabled={isLoading}
             aria-label="Send message"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#7ad4ba] text-lg text-[#1b1b1b] shadow-sm hover:bg-[#6ac8ac] focus:outline-none"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#7ad4ba] text-lg text-[#1b1b1b] shadow-sm hover:bg-[#6ac8ac] focus:outline-none disabled:cursor-wait disabled:opacity-60"
           >
-            <span aria-hidden="true">➤</span>
+            <span aria-hidden="true">{isLoading ? '…' : '➤'}</span>
           </button>
         </div>
       </div>

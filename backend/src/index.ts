@@ -1,18 +1,30 @@
 import 'dotenv/config'
 import cors from 'cors'
 import express from 'express'
+import type { ErrorRequestHandler } from 'express'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
+import authRouter from './routes/auth.js'
 import chatRouter from './routes/chat.js'
+import conversationsRouter from './routes/conversations.js'
+import { connectToDatabase } from './services/database.js'
 
-const apiKey = process.env.OPENAI_API_KEY?.trim()
+const apiKey =
+  process.env.OPENAI_API_KEY?.trim() || process.env.OPEN_AI_API_KEY?.trim()
 if (!apiKey) {
-  throw new Error('OPENAI_API_KEY is required. Add it to backend/.env.')
+  throw new Error(
+    'OPENAI_API_KEY is required. Set it in backend/.env before starting the API.',
+  )
+}
+process.env.OPENAI_API_KEY = apiKey
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET must be at least 32 characters.')
 }
 
 const app = express()
 const port = Number(process.env.PORT ?? 3001)
 
+app.set('trust proxy', 1)
 app.use(helmet())
 app.use(
   cors({
@@ -26,6 +38,19 @@ app.get('/api/health', (_request, response) => {
 })
 
 app.use(
+  '/api/auth',
+  rateLimit({
+    windowMs: 15 * 60_000,
+    limit: 30,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Too many authentication requests. Please try again later.' },
+  }),
+  authRouter,
+)
+
+app.use('/api/conversations', conversationsRouter)
+app.use(
   '/api/chat',
   rateLimit({
     windowMs: 60_000,
@@ -37,6 +62,15 @@ app.use(
   chatRouter,
 )
 
-app.listen(port, () => {
-  console.log(`Chat API listening on http://localhost:${port}`)
-})
+const errorHandler: ErrorRequestHandler = (error, _request, response, next) => {
+  console.error('API request failed:', error instanceof Error ? error.name : 'Unknown error')
+  if (response.headersSent) {
+    next(error)
+    return
+  }
+  response.status(500).json({ error: 'The server could not complete the request.' })
+}
+app.use(errorHandler)
+
+await connectToDatabase()
+app.listen(port, () => console.log(`Chat API listening on port ${port}`))

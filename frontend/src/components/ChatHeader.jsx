@@ -3,6 +3,9 @@ function ChatHeader({
   onNewChat,
   onToggleSidebar,
   onToggleTheme,
+  userEmail,
+  onSignOut,
+  title,
 }) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-[var(--border-color)] bg-[var(--header-bg)] px-3 sm:h-[72px] sm:px-5">
@@ -18,7 +21,7 @@ function ChatHeader({
           </svg>
         </button>
         <span className="truncate text-sm font-medium text-[var(--title-color)] sm:text-base">
-          New Chat
+          {title}
         </span>
       </div>
 
@@ -48,6 +51,16 @@ function ChatHeader({
         >
           <span className="text-[15px]">＋</span>
           <span className="hidden sm:inline">New Chat</span>
+        </button>
+        <span className="hidden max-w-40 truncate text-xs text-[var(--muted-color)] lg:inline">
+          {userEmail}
+        </span>
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="rounded-md border border-[var(--border-color)] bg-[var(--panel-bg)] px-3 py-2 text-sm text-[var(--body-color)] hover:bg-[var(--hover-bg)]"
+        >
+          Sign out
         </button>
       </div>
     </header>
