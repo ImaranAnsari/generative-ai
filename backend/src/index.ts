@@ -10,14 +10,14 @@ import conversationsRouter from './routes/conversations.js'
 import { connectToDatabase } from './services/database.js'
 
 const openAiApiKey =
-  process.env.OPENAI_API_KEY?.trim() || process.env.OPEN_AI_API_KEY?.trim()
+  process.env.OPEN_AI_API_KEY?.trim() || process.env.OPEN_AI_API_KEY?.trim()
 const groqApiKey = process.env.GROQ_API_KEY?.trim()
 if (!openAiApiKey && !groqApiKey) {
   throw new Error(
-    'Configure OPENAI_API_KEY or GROQ_API_KEY in backend/.env before starting the API.',
+    'Configure OPEN_AI_API_KEY or GROQ_API_KEY in backend/.env before starting the API.',
   )
 }
-if (openAiApiKey) process.env.OPENAI_API_KEY = openAiApiKey
+if (openAiApiKey) process.env.OPEN_AI_API_KEY = openAiApiKey
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   throw new Error('JWT_SECRET must be at least 32 characters.')
 }
