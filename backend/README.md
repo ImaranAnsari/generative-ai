@@ -12,8 +12,8 @@ npm install
 cp .env.example .env
 ```
 
-Set `OPENAI_API_KEY`, `MONGODB_URI`, and a random `JWT_SECRET` with at least 32
-characters in `.env`. Mongoose connects to the database named by
+Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY`, `MONGODB_URI`, and a
+random `JWT_SECRET` with at least 32 characters in `.env`. Mongoose connects to the database named by
 `MONGODB_DATABASE` (defaults to `generative_ai`). Start MongoDB separately,
 then run:
 
@@ -29,9 +29,11 @@ Chat replies use Server-Sent Events with `start`, `delta`, `done`, and `error`
 events. Chat requests accept a `message` and optional `conversationId`; the API
 loads the latest 30 saved messages for model context.
 
-`OPENAI_MODEL`, `PORT`, `CORS_ORIGIN`, and `MONGODB_DATABASE` can be customized
-through environment variables. Never expose the OpenAI key or JWT secret to
-frontend code or commit `.env`.
+`OPENAI_MODEL`, `GROQ_MODEL`, `PORT`, `CORS_ORIGIN`, and `MONGODB_DATABASE` can
+be customized through environment variables. OpenAI is preferred when its key
+is configured; failed requests fall back to Groq when `GROQ_API_KEY` is set.
+The default Groq model is `openai/gpt-oss-20b`.
+Never expose provider keys or the JWT secret to frontend code or commit `.env`.
 
 Backend code is organized under `src/models` (Mongoose schemas),
 `src/controllers` (request handling), and `src/routes` (endpoint wiring).

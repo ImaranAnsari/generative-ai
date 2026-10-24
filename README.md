@@ -13,8 +13,10 @@ npm install
 cp .env.example .env
 ```
 
-Set `OPENAI_API_KEY` and a random `JWT_SECRET` with at least 32 characters in
-`backend/.env`, then start the API:
+Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY`, and a random
+`JWT_SECRET` with at least 32 characters in `backend/.env`, then start the API.
+OpenAI is attempted first; Groq is used automatically if the OpenAI request
+fails. `GROQ_MODEL` defaults to `openai/gpt-oss-20b`.
 
 ```sh
 npm run dev
@@ -41,8 +43,9 @@ Install Docker Compose, then create the backend environment file:
 cp backend/.env.example backend/.env
 ```
 
-Set `OPENAI_API_KEY` and a randomly generated `JWT_SECRET` of at least 32
-characters in `backend/.env`, then start the services from the repository root:
+Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY` and a randomly generated
+`JWT_SECRET` of at least 32 characters in `backend/.env`, then start the
+services from the repository root:
 
 ```sh
 docker compose up --build -d

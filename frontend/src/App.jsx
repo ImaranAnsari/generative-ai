@@ -182,6 +182,13 @@ function App() {
         if (!data) return
         const event = JSON.parse(data)
         if (event.type === 'start') setConversationId(event.conversationId)
+        if (event.type === 'reset' && streamedAssistantId) {
+          setMessages((currentMessages) =>
+            currentMessages.map((message) =>
+              message.id === streamedAssistantId ? { ...message, text: '' } : message,
+            ),
+          )
+        }
         if (event.type === 'delta') {
           if (!streamedAssistantId) {
             streamedAssistantId = crypto.randomUUID()
