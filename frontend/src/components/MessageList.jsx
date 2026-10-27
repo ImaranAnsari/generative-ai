@@ -16,6 +16,27 @@ function MessageList({ messages }) {
             }`}
           >
             {message.text && <p>{message.text}</p>}
+            {message.sources?.length > 0 && (
+              <ul
+                aria-label="Web search sources"
+                className={`flex flex-col gap-1 text-sm ${
+                  message.text ? 'mt-3' : ''
+                }`}
+              >
+                {message.sources.map((source, index) => (
+                  <li key={source.url}>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[var(--muted-color)] underline decoration-current/40 underline-offset-2 hover:text-[var(--body-color)]"
+                    >
+                      [{index + 1}] {source.title || source.url}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
             {message.attachments?.length > 0 && (
               <ul
                 aria-label="Message attachments"

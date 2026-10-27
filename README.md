@@ -15,6 +15,8 @@ cp .env.example .env
 
 Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY`, and a random
 `JWT_SECRET` with at least 32 characters in `backend/.env`, then start the API.
+Set `TAVILY_API_KEY` there to enable the optional **Search the web** composer
+toggle.
 OpenAI is attempted first; Groq is used automatically if the OpenAI request
 fails. `GROQ_MODEL` defaults to `openai/gpt-oss-20b`.
 
@@ -43,9 +45,9 @@ Install Docker Compose, then create the backend environment file:
 cp backend/.env.example backend/.env
 ```
 
-Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY` and a randomly generated
-`JWT_SECRET` of at least 32 characters in `backend/.env`, then start the
-services from the repository root:
+Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY`, a randomly generated
+`JWT_SECRET` of at least 32 characters, and optionally `TAVILY_API_KEY` in
+`backend/.env`, then start the services from the repository root:
 
 ```sh
 docker compose up --build -d
@@ -66,5 +68,6 @@ MongoDB service with backups.
   requests use signed bearer tokens that expire after seven days.
 - Conversation history is private to the signed-in account.
 - Assistant responses stream as they are generated.
+- Optional Tavily web search adds source links to assistant answers.
 - Attachments can be displayed in the chat, but file contents are not uploaded
   or analyzed.

@@ -2,6 +2,8 @@ function ChatInput({
   value,
   onChange,
   onSend,
+  webSearch,
+  onToggleWebSearch,
   attachments,
   onAddAttachments,
   onRemoveAttachment,
@@ -95,6 +97,16 @@ function ChatInput({
             <span aria-hidden="true">{isLoading ? '…' : '➤'}</span>
           </button>
         </div>
+        <label className="mt-2 inline-flex cursor-pointer items-center gap-2 px-2 text-sm text-[var(--muted-color)]">
+          <input
+            type="checkbox"
+            checked={webSearch}
+            onChange={onToggleWebSearch}
+            disabled={isLoading}
+            className="accent-[#369b7d]"
+          />
+          Search the web
+        </label>
       </div>
     </div>
   )

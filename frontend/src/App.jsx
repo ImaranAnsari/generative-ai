@@ -14,6 +14,7 @@ function App() {
   const [conversationId, setConversationId] = useState(null)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
+  const [webSearch, setWebSearch] = useState(false)
   const [attachments, setAttachments] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -157,6 +158,7 @@ function App() {
         },
         body: JSON.stringify({
           message: text,
+          webSearch,
           ...(conversationId ? { conversationId } : {}),
         }),
         signal: controller.signal,
@@ -182,6 +184,23 @@ function App() {
         if (!data) return
         const event = JSON.parse(data)
         if (event.type === 'start') setConversationId(event.conversationId)
+        if (event.type === 'sources' && event.sources.length > 0) {
+          if (!streamedAssistantId) {
+            streamedAssistantId = crypto.randomUUID()
+            setMessages((currentMessages) => [
+              ...currentMessages,
+              { id: streamedAssistantId, sender: 'assistant', text: '', sources: event.sources },
+            ])
+          } else {
+            setMessages((currentMessages) =>
+              currentMessages.map((message) =>
+                message.id === streamedAssistantId
+                  ? { ...message, sources: event.sources }
+                  : message,
+              ),
+            )
+          }
+        }
         if (event.type === 'reset' && streamedAssistantId) {
           setMessages((currentMessages) =>
             currentMessages.map((message) =>
@@ -313,6 +332,8 @@ function App() {
             value={input}
             onChange={setInput}
             onSend={sendMessage}
+            webSearch={webSearch}
+            onToggleWebSearch={() => setWebSearch((enabled) => !enabled)}
             isLoading={isLoading}
             error={error}
             attachments={attachments}
