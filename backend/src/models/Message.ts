@@ -1,5 +1,13 @@
 import { Schema, model } from 'mongoose'
 
+const sourceSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    url: { type: String, required: true },
+  },
+  { _id: false },
+)
+
 const messageSchema = new Schema(
   {
     userId: {
@@ -16,6 +24,7 @@ const messageSchema = new Schema(
     },
     role: { type: String, enum: ['user', 'assistant'], required: true },
     content: { type: String, required: true, maxlength: 12_000 },
+    sources: { type: [sourceSchema], default: undefined },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 )

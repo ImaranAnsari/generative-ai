@@ -38,10 +38,11 @@ export async function getConversation(request: Request, response: Response) {
     conversation: {
       id: conversation._id.toString(),
       title: conversation.title,
-      messages: history.map(({ _id, role, content, createdAt }) => ({
+      messages: history.map(({ _id, role, content, sources, createdAt }) => ({
         id: _id.toString(),
         sender: role,
         text: content,
+        ...(sources?.length ? { sources } : {}),
         createdAt,
       })),
     },

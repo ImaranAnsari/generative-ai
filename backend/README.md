@@ -13,7 +13,8 @@ cp .env.example .env
 ```
 
 Set at least one of `OPENAI_API_KEY` or `GROQ_API_KEY`, `MONGODB_URI`, and a
-random `JWT_SECRET` with at least 32 characters in `.env`. Mongoose connects to the database named by
+random `JWT_SECRET` with at least 32 characters in `.env`. Add `TAVILY_API_KEY`
+to enable optional web search from the chat composer. Mongoose connects to the database named by
 `MONGODB_DATABASE` (defaults to `generative_ai`). Start MongoDB separately,
 then run:
 
